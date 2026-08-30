@@ -150,6 +150,7 @@
     <label for="merchantId">Merchant ID</label>
 
     <div class="input-wrap">
+
       <span class="fixed">upi://pay?pa=</span>
 
       <input
@@ -160,9 +161,10 @@
       >
 
       <span class="suffix">@ybl</span>
+
     </div>
 
-    <button onclick="generateQR()">
+    <button id="generateBtn">
       Generate QR Code
     </button>
 
@@ -172,21 +174,209 @@
 
     <div id="upiText" class="upi-text"></div>
 
-    <button
-      id="downloadBtn"
-      class="download"
-      onclick="downloadQR()"
-    >
+    <button id="downloadBtn" class="download">
       Download QR Code
     </button>
 
   </div>
 
 
-  <!-- QR GENERATE SCRIPT -->
+  <!-- FIREBASE + QR SCRIPT -->
 
-  <script>
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    }
+      from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+
+    /* Firebase Configuration */
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyDCCfFEe5-vaqXh57ok_RlqJtzmSgLtkOs",
+
+      authDomain:
+        "marchant-qr-gernate.firebaseapp.com",
+
+      projectId:
+        "marchant-qr-gernate",
+
+      storageBucket:
+        "marchant-qr-gernate.firebasestorage.app",
+
+      messagingSenderId:
+        "532197694237",
+
+      appId:
+        "1:532197694237:web:16730dbbe778f445c4dff4"
+
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+
+    /* QR Generate */
 
     let qr;
 
-   
+
+    async function generateQR() {
+
+      const merchantId =
+        document.getElementById("merchantId").value.trim();
+
+
+      if (!merchantId) {
+
+        alert("Please enter Merchant ID");
+
+        return;
+
+      }
+
+
+      const upiLink =
+        "upi://pay?pa=" + merchantId + "@ybl";
+
+
+      document.getElementById("qrCode").innerHTML = "";
+
+
+      qr = new QRCode(
+        document.getElementById("qrCode"),
+        {
+          text: upiLink,
+          width: 260,
+          height: 260,
+          correctLevel: QRCode.CorrectLevel.H
+        }
+      );
+
+
+      document.getElementById("qrBox").style.display =
+        "block";
+
+      document.getElementById("upiText").style.display =
+        "block";
+
+      document.getElementById("upiText").textContent =
+        upiLink;
+
+      document.getElementById("downloadBtn").style.display =
+        "block";
+
+
+      /* Save to Firebase */
+
+      try {
+
+        await addDoc(
+          collection(db, "merchant_qr"),
+          {
+
+            merchantId: merchantId,
+
+            upiId: merchantId + "@ybl",
+
+            upiLink: upiLink,
+
+            createdAt: serverTimestamp()
+
+          }
+        );
+
+        console.log("Saved to Firebase");
+
+      } catch (error) {
+
+        console.error(
+          "Firebase save error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /* Generate Button */
+
+    document
+      .getElementById("generateBtn")
+      .addEventListener(
+        "click",
+        generateQR
+      );
+
+
+    /* Enter Key */
+
+    document
+      .getElementById("merchantId")
+      .addEventListener(
+        "keydown",
+        function(e) {
+
+          if (e.key === "Enter") {
+
+            generateQR();
+
+          }
+
+        }
+      );
+
+
+    /* Download QR */
+
+    document
+      .getElementById("downloadBtn")
+      .addEventListener(
+        "click",
+        function() {
+
+          const canvas =
+            document.querySelector("#qrCode canvas");
+
+          const img =
+            document.querySelector("#qrCode img");
+
+
+          let url =
+            canvas
+              ? canvas.toDataURL("image/png")
+              : img.src;
+
+
+          const a =
+            document.createElement("a");
+
+          a.href = url;
+
+          a.download =
+            "PhonePe-Merchant-QR.png";
+
+          document.body.appendChild(a);
+
+          a.click();
+
+          document.body.removeChild(a);
+
+        }
+      );
+
+  </script>
+
+</body>
+</html>

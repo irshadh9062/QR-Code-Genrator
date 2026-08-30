@@ -193,6 +193,21 @@
     if (e.key === "Enter") generateQR();
   });
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyDCCfFEe5-vaqXh57ok_RlqJtzmSgLtkOs",
+    authDomain: "marchant-qr-gernate.firebaseapp.com",
+    projectId: "marchant-qr-gernate",
+    storageBucket: "marchant-qr-gernate.firebasestorage.app",
+    messagingSenderId: "532197694237",
+    appId: "1:532197694237:web:16730dbbe778f445c4dff4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+</script>
 </body>
 </html>

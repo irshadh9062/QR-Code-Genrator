@@ -4,12 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PhonePe Merchant QR Generate</title>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       min-height: 100vh;
@@ -20,7 +17,6 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #5f259f, #7b2cbf, #9d4edd);
     }
-
     .card {
       width: 100%;
       max-width: 430px;
@@ -30,19 +26,16 @@
       text-align: center;
       box-shadow: 0 15px 40px rgba(0,0,0,.25);
     }
-
     h1 {
       margin: 0 0 8px;
       color: #5f259f;
       font-size: 25px;
     }
-
     .subtitle {
       margin: 0 0 22px;
       color: #666;
       font-size: 14px;
     }
-
     label {
       display: block;
       text-align: left;
@@ -50,7 +43,6 @@
       margin-bottom: 8px;
       color: #333;
     }
-
     .input-wrap {
       display: flex;
       align-items: center;
@@ -60,14 +52,12 @@
       margin-bottom: 16px;
       background: #fafafa;
     }
-
     .fixed {
       padding: 13px 8px 13px 12px;
       color: #555;
       font-size: 14px;
       white-space: nowrap;
     }
-
     input {
       width: 100%;
       border: 0;
@@ -76,14 +66,12 @@
       font-size: 16px;
       background: transparent;
     }
-
     .suffix {
       padding: 13px 12px 13px 5px;
       color: #555;
       font-size: 14px;
       white-space: nowrap;
     }
-
     button {
       width: 100%;
       border: 0;
@@ -96,11 +84,7 @@
       color: white;
       background: #5f259f;
     }
-
-    button:hover {
-      background: #4d1e82;
-    }
-
+    button:hover { background: #4d1e82; }
     #qrBox {
       display: none;
       margin: 22px auto 15px;
@@ -110,13 +94,10 @@
       border-radius: 14px;
       background: #fff;
     }
-
-    #qrCode img,
-    #qrCode canvas {
+    #qrCode img, #qrCode canvas {
       display: block;
       margin: auto;
     }
-
     .upi-text {
       display: none;
       word-break: break-all;
@@ -124,53 +105,34 @@
       color: #555;
       margin: 10px 0;
     }
-
     .download {
       display: none;
       background: #20a464;
       margin-top: 8px;
     }
-
-    .download:hover {
-      background: #17834e;
+    .download:hover { background: #17834e; }
+    .footer {
+      margin-top: 22px;
+      font-size: 13px;
+      color: #888;
     }
   </style>
 </head>
-
 <body>
 
   <div class="card">
-
-    <h1>QR Generate</h1>
-
-    <p class="subtitle">
-      Enter Merchant ID to generate UPI QR
-    </p>
+    <h1>PhonePe Merchant QR Generate</h1>
+    <p class="subtitle">Enter Merchant ID to generate UPI QR</p>
 
     <label for="merchantId">Merchant ID</label>
 
     <div class="input-wrap">
-
-      <span class="fixed">
-        upi://pay?pa=
-      </span>
-
-      <input
-        id="merchantId"
-        type="text"
-        placeholder="Q359769873"
-        autocomplete="off"
-      >
-
-      <span class="suffix">
-        @ybl
-      </span>
-
+      <span class="fixed">upi://pay?pa=Q</span>
+      <input id="merchantId" type="text" placeholder="359769873" autocomplete="off">
+      <span class="suffix">@ybl</span>
     </div>
 
-    <button onclick="generateQR()">
-      Generate QR Code
-    </button>
+    <button onclick="generateQR()">Generate QR Code</button>
 
     <div id="qrBox">
       <div id="qrCode"></div>
@@ -178,145 +140,58 @@
 
     <div id="upiText" class="upi-text"></div>
 
-    <button
-      id="downloadBtn"
-      class="download"
-      onclick="downloadQR()"
-    >
+    <button id="downloadBtn" class="download" onclick="downloadQR()">
       Download QR Code
     </button>
 
   </div>
 
+<script>
+  let qr;
 
-  <script>
+  function generateQR() {
+    const merchantId = "Q" + document.getElementById("merchantId").value.trim().replace(/^Q/i, "");
 
-    let qr;
-
-
-    function generateQR() {
-
-      const merchantId =
-        document
-          .getElementById("merchantId")
-          .value
-          .trim();
-
-
-      if (!merchantId) {
-
-        alert("Please enter Merchant ID");
-
-        return;
-
-      }
-
-
-      const upiLink =
-        "upi://pay?pa=" +
-        merchantId +
-        "@ybl";
-
-
-      document
-        .getElementById("qrCode")
-        .innerHTML = "";
-
-
-      qr = new QRCode(
-        document.getElementById("qrCode"),
-        {
-          text: upiLink,
-          width: 260,
-          height: 260,
-          correctLevel: QRCode.CorrectLevel.H
-        }
-      );
-
-
-      document
-        .getElementById("qrBox")
-        .style.display = "block";
-
-
-      document
-        .getElementById("upiText")
-        .style.display = "block";
-
-
-      document
-        .getElementById("upiText")
-        .textContent = upiLink;
-
-
-      document
-        .getElementById("downloadBtn")
-        .style.display = "block";
-
+    if (!merchantId) {
+      alert("Please enter Merchant ID");
+      return;
     }
 
+    const upiLink = "upi://pay?pa=" + merchantId + "@ybl";
 
-    function downloadQR() {
+    document.getElementById("qrCode").innerHTML = "";
 
-      const canvas =
-        document.querySelector(
-          "#qrCode canvas"
-        );
+    qr = new QRCode(document.getElementById("qrCode"), {
+      text: upiLink,
+      width: 260,
+      height: 260,
+      correctLevel: QRCode.CorrectLevel.H
+    });
 
+    document.getElementById("qrBox").style.display = "block";
+    document.getElementById("upiText").style.display = "block";
+    document.getElementById("upiText").textContent = upiLink;
+    document.getElementById("downloadBtn").style.display = "block";
+  }
 
-      const img =
-        document.querySelector(
-          "#qrCode img"
-        );
+  function downloadQR() {
+    const canvas = document.querySelector("#qrCode canvas");
+    const img = document.querySelector("#qrCode img");
 
+    let url = canvas ? canvas.toDataURL("image/png") : img.src;
 
-      let url =
-        canvas
-          ? canvas.toDataURL("image/png")
-          : img.src;
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "PhonePe-Merchant-QR.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 
-
-      const a =
-        document.createElement("a");
-
-
-      a.href = url;
-
-      a.download =
-        "PhonePe-Merchant-QR.png";
-
-
-      document
-        .body
-        .appendChild(a);
-
-
-      a.click();
-
-
-      document
-        .body
-        .removeChild(a);
-
-    }
-
-
-    document
-      .getElementById("merchantId")
-      .addEventListener(
-        "keydown",
-        function(e) {
-
-          if (e.key === "Enter") {
-
-            generateQR();
-
-          }
-
-        }
-      );
-
-  </script>
+  document.getElementById("merchantId").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") generateQR();
+  });
+</script>
 
 </body>
 </html>

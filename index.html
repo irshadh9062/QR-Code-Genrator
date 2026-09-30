@@ -169,6 +169,7 @@
       } else if (qrImg) {
         const drawQRImage = () => {
           ctx.drawImage(qrImg, QR_X, QR_Y, QR_W, QR_H);
+          drawDynamicUpiId(ctx, merchantId);
           showResult();
         };
         if (qrImg.complete) drawQRImage();
@@ -176,10 +177,26 @@
         return;
       }
 
+      drawDynamicUpiId(ctx, merchantId);
       showResult();
     };
 
     templateImg.src = TEMPLATE_IMAGE;
+  }
+
+  function drawDynamicUpiId(ctx, merchantId) {
+    const upiText = "UPI ID: " + merchantId + "@ybl";
+
+    // Cover the old static UPI ID text only.
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(155, 1168, 353, 43);
+
+    // Draw the new UPI ID generated from the entered Merchant ID.
+    ctx.fillStyle = "#777777";
+    ctx.font = "24px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(upiText, 331.5, 1189);
   }
 
   function showResult() {
